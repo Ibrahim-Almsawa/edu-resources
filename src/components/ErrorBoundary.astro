@@ -1,0 +1,62 @@
+---
+interface Props {
+  error?: Error;
+}
+
+const { error } = Astro.props;
+---
+
+<div class="flex min-h-[400px] items-center justify-center px-4 py-16">
+  <div class="text-center">
+    <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/10 dark:text-red-400">
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="currentColor" 
+        class="h-8 w-8"
+      >
+        <path 
+          fill-rule="evenodd" 
+          d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" 
+          clip-rule="evenodd" 
+        />
+      </svg>
+    </div>
+
+    <h2 class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
+      Something went wrong
+    </h2>
+
+    <p class="mb-6 text-gray-600 dark:text-gray-300">
+      {error?.message || "An unexpected error occurred. Please try again later."}
+    </p>
+
+    <div class="flex justify-center gap-4">
+      <a 
+        href="/" 
+        class="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+      >
+        Go home
+      </a>
+      <button 
+        onclick="window.location.reload()"
+        class="inline-flex items-center justify-center rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+      >
+        Try again
+      </button>
+    </div>
+
+    {error && (
+      <pre class="mt-6 max-h-96 overflow-auto rounded-lg bg-gray-100 p-4 text-left text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+        <code>{error.stack}</code>
+      </pre>
+    )}
+  </div>
+</div>
+
+<style>
+  .dark {
+    background-color: #1a1d23;
+    color: #fff;
+  }
+</style>

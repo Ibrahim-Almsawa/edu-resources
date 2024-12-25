@@ -1,0 +1,291 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Contribute Resources"
+  description="Help improve our directory by contributing new learning resources"
+>
+  <div class="contribute-page">
+    <header>
+      <h1>Contribute Resources</h1>
+      <p class="subtitle">Help others learn by sharing valuable learning resources</p>
+    </header>
+
+    <section class="guidelines">
+      <h2>Contribution Guidelines</h2>
+      <div class="guidelines-grid">
+        <div class="guideline">
+          <h3>Quality Standards</h3>
+          <ul>
+            <li>Resources must be accurate and up-to-date</li>
+            <li>Content should be well-organized and accessible</li>
+            <li>Regular maintenance and updates are important</li>
+            <li>Clear learning objectives should be present</li>
+          </ul>
+        </div>
+
+        <div class="guideline">
+          <h3>Resource Types</h3>
+          <ul>
+            <li>Tutorials and courses</li>
+            <li>Documentation and guides</li>
+            <li>Tools and platforms</li>
+            <li>Interactive learning resources</li>
+            <li>Video content and webinars</li>
+          </ul>
+        </div>
+
+        <div class="guideline">
+          <h3>Required Information</h3>
+          <ul>
+            <li>Resource title and URL</li>
+            <li>Brief description</li>
+            <li>Topics covered</li>
+            <li>Difficulty level</li>
+            <li>Cost (free/paid/freemium)</li>
+          </ul>
+        </div>
+
+        <div class="guideline">
+          <h3>Review Process</h3>
+          <ul>
+            <li>Initial submission review</li>
+            <li>Quality assessment</li>
+            <li>Community feedback</li>
+            <li>Regular verification</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="submission">
+      <h2>How to Submit</h2>
+      <div class="submission-options">
+        <div class="option">
+          <h3>1. GitHub Pull Request</h3>
+          <p>Submit resources directly through our GitHub repository:</p>
+          <ol>
+            <li>Fork the repository</li>
+            <li>Create a new branch</li>
+            <li>Add your resource using the template</li>
+            <li>Submit a pull request</li>
+          </ol>
+          <a href="https://github.com/your-repo" class="button">View on GitHub</a>
+        </div>
+
+        <div class="option">
+          <h3>2. Submission Form</h3>
+          <p>Use our online form to submit resources:</p>
+          <form id="resource-form" class="submission-form">
+            <div class="form-group">
+              <label for="title">Resource Title*</label>
+              <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+              <label for="url">URL*</label>
+              <input type="url" id="url" name="url" required>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description*</label>
+              <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="topics">Topics (comma-separated)*</label>
+              <input type="text" id="topics" name="topics" required>
+            </div>
+
+            <div class="form-group">
+              <label for="difficulty">Difficulty Level*</label>
+              <select id="difficulty" name="difficulty" required>
+                <option value="">Select difficulty</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cost">Cost*</label>
+              <select id="cost" name="cost" required>
+                <option value="">Select cost</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
+                <option value="freemium">Freemium</option>
+              </select>
+            </div>
+
+            <button type="submit" class="button primary">Submit Resource</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .contribute-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #4b5563;
+  }
+
+  section {
+    margin-bottom: 4rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #1f2937;
+  }
+
+  .guidelines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .guideline {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+
+  ul, ol {
+    padding-left: 1.5rem;
+    color: #4b5563;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  .submission-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .option {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .submission-form {
+    margin-top: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: #f9fafb;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    ring: 2px solid #2563eb;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .primary {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .primary:hover {
+    background: #1d4ed8;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+    }
+
+    .guidelines-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .submission-options {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('resource-form') as HTMLFormElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      // In a real application, you would send this data to your backend
+      console.log('Submitted resource:', data);
+      alert('Thank you for your submission! We will review it shortly.');
+      form.reset();
+    } catch (error) {
+      console.error('Error submitting resource:', error);
+      alert('There was an error submitting your resource. Please try again.');
+    }
+  });
+</script>

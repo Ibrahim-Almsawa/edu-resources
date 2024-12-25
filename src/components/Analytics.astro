@@ -1,0 +1,20 @@
+---
+const isProd = import.meta.env.PROD;
+---
+
+{isProd && (
+  <script 
+    defer 
+    data-domain="your-domain.com" 
+    src="https://plausible.io/js/script.js"
+  ></script>
+)}
+
+<script is:inline>
+  // Simple event tracking helper
+  window.trackEvent = function(eventName, props = {}) {
+    if (window.plausible) {
+      window.plausible(eventName, { props });
+    }
+  }
+</script>

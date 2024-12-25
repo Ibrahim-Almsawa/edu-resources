@@ -1,0 +1,109 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ResourceList from '../components/ResourceList.astro';
+import FilterPanel from '../components/FilterPanel.astro';
+
+const query = Astro.url.searchParams.get('q') || '';
+const resources = await getCollection('resources');
+
+// Perform search
+const searchResults = resources.filter(resource => {
+  const searchText = [
+    resource.data.title,
+    resource.data.description,
+    ...resource.data.topics,
+  ].join(' ').toLowerCase();
+  
+  return query.toLowerCase().split(' ').every(term => 
+    searchText.includes(term)
+  );
+});
+---
+
+<BaseLayout title={`Search Results for "${query}"`}>
+  <div class="search-page">
+    <header>
+      <h1>Search Results</h1>
+      <p>Found {searchResults.length} resources for "{query}"</p>
+    </header>
+
+    <div class="search-content">
+      <aside class="filters">
+        <FilterPanel />
+      </aside>
+
+      <main class="results">
+        <ResourceList resources={searchResults} />
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .search-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  header p {
+    color: #6b7280;
+  }
+
+  .search-content {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+  }
+
+  .filters {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+  }
+
+  @media (max-width: 768px) {
+    .search-content {
+      grid-template-columns: 1fr;
+    }
+
+    .filters {
+      position: static;
+      margin-bottom: 2rem;
+    }
+  }
+</style>
+
+<script>
+  // Handle filter changes
+  window.addEventListener('filter-change', (e: Event) => {
+    const filters = (e as CustomEvent).detail;
+    const resultElements = document.querySelectorAll('.resource-card');
+    
+    resultElements.forEach(el => {
+      const resourceEl = el as HTMLElement;
+      const type = resourceEl.dataset.type;
+      const difficulty = resourceEl.dataset.difficulty;
+      const cost = resourceEl.dataset.cost;
+      
+      const matchesType = filters.type.length === 0 || filters.type.includes(type);
+      const matchesDifficulty = filters.difficulty.length === 0 || filters.difficulty.includes(difficulty);
+      const matchesCost = filters.cost.length === 0 || filters.cost.includes(cost);
+      
+      if (matchesType && matchesDifficulty && matchesCost) {
+        resourceEl.style.display = '';
+      } else {
+        resourceEl.style.display = 'none';
+      }
+    });
+  });
+</script>

@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ResourceList from '../../components/ResourceList.astro';
+import FilterPanel from '../../components/FilterPanel.astro';
+
+export async function getStaticPaths() {
+  const topics = await getCollection('topics');
+  return topics.map(topic => ({
+    params: { slug: topic.slug },
+    props: { topic },
+  }));
+}
+
+const { topic } = Astro.props;
+const { Content } = await topic.render();
+
+// Get resources for this topic
+const allResources = await getCollection('resources');
+const topicResources = allResources.filter(resource => 
+  resource.data.topics.includes(topic.slug)
+);
+---
+
+<BaseLayout title={`${topic.data.name} Resources`}>
+  <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+    <nav class="mb-8" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-2 text-sm">
+        <li>
+          <a href="/" class="text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400">
+            Home
+          </a>
+        </li>
+        <li class="text-gray-400 dark:text-gray-600">/</li>
+        <li>
+          <a href="/topics" class="text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400">
+            Topics
+          </a>
+        </li>
+        <li class="text-gray-400 dark:text-gray-600">/</li>
+        <li class="text-gray-900 dark:text-white" aria-current="page">
+          {topic.data.name}
+        </li>
+      </ol>
+    </nav>
+
+    <header class="mb-12 text-center">
+      <div class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 text-4xl dark:bg-primary-900/10">
+        <span role="img" aria-label={topic.data.name}>
+          {topic.data.icon}
+        </span>
+      </div>
+      <h1 class="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+        {topic.data.name}
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+        {topic.data.description}
+      </p>
+    </header>
+
+    <div class="grid gap-8 lg:grid-cols-[280px,1fr]">
+      <aside class="lg:block">
+        <div class="sticky top-8">
+          <FilterPanel />
+        </div>
+      </aside>
+      
+      <main>
+        <div class="prose prose-lg mb-12 max-w-none dark:prose-invert">
+          <Content />
+        </div>
+        
+        <section>
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+              Resources
+              <span class="ml-2 text-lg font-normal text-gray-600 dark:text-gray-400">
+                ({topicResources.length})
+              </span>
+            </h2>
+          </div>
+          <ResourceList resources={topicResources} />
+        </section>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Add any custom styles here */
+  :global(.prose) {
+    max-width: none;
+  }
+
+  :global(.prose a) {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  :global(.prose a:hover) {
+    text-decoration: underline;
+  }
+
+  :global(.dark .prose) {
+    --tw-prose-body: theme('colors.gray.300');
+    --tw-prose-headings: theme('colors.white');
+    --tw-prose-links: theme('colors.primary.400');
+    --tw-prose-bold: theme('colors.white');
+    --tw-prose-counters: theme('colors.gray.400');
+    --tw-prose-bullets: theme('colors.gray.400');
+    --tw-prose-quotes: theme('colors.gray.300');
+    --tw-prose-code: theme('colors.white');
+    --tw-prose-hr: theme('colors.gray.700');
+    --tw-prose-th-borders: theme('colors.gray.700');
+    --tw-prose-td-borders: theme('colors.gray.700');
+  }
+</style>

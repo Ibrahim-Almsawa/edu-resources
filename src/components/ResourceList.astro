@@ -1,0 +1,129 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  topic?: string;
+  limit?: number;
+}
+
+const { topic, limit } = Astro.props;
+
+const resources = await getCollection('resources');
+let filteredResources = resources;
+
+if (topic) {
+  filteredResources = resources.filter(resource => 
+    resource.data.topics.includes(topic)
+  );
+}
+
+if (limit) {
+  filteredResources = filteredResources.slice(0, limit);
+}
+
+// Helper function to get resource type icon
+function getResourceTypeIcon(type: string) {
+  switch (type) {
+    case 'tutorial':
+      return '📚';
+    case 'video':
+      return '🎥';
+    case 'ebook':
+      return '📖';
+    case 'tool':
+      return '🛠️';
+    case 'documentation':
+      return '📄';
+    default:
+      return '📚';
+  }
+}
+---
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {filteredResources.map((resource) => (
+    <article class="group relative overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-2xl dark:bg-primary-900/10">
+          {resource.data.image ? (
+            <img
+              src={resource.data.image}
+              alt={resource.data.title}
+              class="h-full w-full rounded-lg object-cover"
+              loading="lazy"
+              onerror="this.onerror=null; this.innerHTML=getResourceTypeIcon('${resource.data.type}')"
+            />
+          ) : (
+            <span role="img" aria-label={resource.data.type}>
+              {getResourceTypeIcon(resource.data.type)}
+            </span>
+          )}
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold leading-tight text-gray-900 group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-400">
+            <a href={resource.data.url} target="_blank" rel="noopener noreferrer">
+              {resource.data.title}
+            </a>
+          </h3>
+          {resource.data.author && (
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+              {resource.data.author}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-gray-600 line-clamp-2 dark:text-gray-300">
+        {resource.data.description}
+      </p>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        {resource.data.topics.map((topic) => (
+          <span class="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-700 dark:bg-primary-900/10 dark:text-primary-400">
+            {topic}
+          </span>
+        ))}
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Difficulty:
+          </span>
+          <span class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+            ${resource.data.difficulty === 'beginner' ? 'bg-green-50 text-green-700 dark:bg-green-900/10 dark:text-green-400' : ''}
+            ${resource.data.difficulty === 'intermediate' ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/10 dark:text-yellow-400' : ''}
+            ${resource.data.difficulty === 'advanced' ? 'bg-red-50 text-red-700 dark:bg-red-900/10 dark:text-red-400' : ''}`}
+          >
+            {resource.data.difficulty}
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Type:
+          </span>
+          <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+            {resource.data.type}
+          </span>
+        </div>
+
+        {resource.data.cost && (
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+              Cost:
+            </span>
+            <span class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+              ${resource.data.cost === 'free' ? 'bg-green-50 text-green-700 dark:bg-green-900/10 dark:text-green-400' : ''}
+              ${resource.data.cost === 'freemium' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/10 dark:text-blue-400' : ''}
+              ${resource.data.cost === 'paid' ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/10 dark:text-purple-400' : ''}`}
+            >
+              {resource.data.cost}
+            </span>
+          </div>
+        )}
+      </div>
+    </article>
+  ))}
+</div>

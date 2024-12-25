@@ -1,0 +1,192 @@
+---
+interface Props {
+  activeFilters?: string[];
+}
+
+const { activeFilters = [] } = Astro.props;
+
+const filters = {
+  type: [
+    { value: 'tutorial', label: 'Tutorials', icon: '📚' },
+    { value: 'documentation', label: 'Documentation', icon: '📄' },
+    { value: 'video', label: 'Video Courses', icon: '🎥' },
+    { value: 'tool', label: 'Tools', icon: '🛠️' },
+    { value: 'ebook', label: 'E-Books', icon: '📖' }
+  ],
+  difficulty: [
+    { value: 'beginner', label: 'Beginner', icon: '🌱' },
+    { value: 'intermediate', label: 'Intermediate', icon: '🌿' },
+    { value: 'advanced', label: 'Advanced', icon: '🌳' }
+  ],
+  cost: [
+    { value: 'free', label: 'Free', icon: '🎁' },
+    { value: 'freemium', label: 'Freemium', icon: '💫' },
+    { value: 'paid', label: 'Paid', icon: '💰' }
+  ]
+};
+---
+
+<aside class="sticky top-[calc(var(--header-height)+2rem)] rounded-lg bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl dark:bg-gray-800 animate-fade-in">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Filters</h2>
+    {activeFilters.length > 0 && (
+      <button 
+        class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+        data-action="clear-all"
+      >
+        Clear All
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+          <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+        </svg>
+      </button>
+    )}
+  </div>
+
+  {activeFilters.length > 0 && (
+    <div class="mt-4 flex flex-wrap gap-2">
+      {activeFilters.map((filter) => (
+        <button 
+          class="group inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700 transition-all hover:bg-primary-100 dark:bg-primary-900/10 dark:text-primary-400 dark:hover:bg-primary-900/20 animate-scale-up"
+          data-filter={filter}
+        >
+          {filter}
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 20 20" 
+            fill="currentColor" 
+            class="h-4 w-4 transition-transform duration-200 group-hover:rotate-90"
+          >
+            <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+          </svg>
+        </button>
+      ))}
+    </div>
+  )}
+
+  <div class="mt-6 space-y-8">
+    <div class="filter-group animate-fade-up" style="--animation-delay: 100ms;">
+      <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Resource Type</h3>
+      <div class="space-y-3">
+        {filters.type.map(({ value, label, icon }) => (
+          <label class="group flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <input 
+              type="checkbox" 
+              name="type" 
+              value={value} 
+              checked={activeFilters.includes(value)}
+              class="h-5 w-5 rounded border-gray-300 text-primary-600 transition-colors focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-primary-400"
+            />
+            <span class="text-xl transition-transform duration-200 group-hover:scale-110">{icon}</span>
+            <span class="text-sm font-medium text-gray-700 transition-colors group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-white">
+              {label}
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <div class="filter-group animate-fade-up" style="--animation-delay: 200ms;">
+      <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Difficulty Level</h3>
+      <div class="space-y-3">
+        {filters.difficulty.map(({ value, label, icon }) => (
+          <label class="group flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <input 
+              type="checkbox" 
+              name="difficulty" 
+              value={value} 
+              checked={activeFilters.includes(value)}
+              class="h-5 w-5 rounded border-gray-300 text-primary-600 transition-colors focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-primary-400"
+            />
+            <span class="text-xl transition-transform duration-200 group-hover:scale-110">{icon}</span>
+            <span class="text-sm font-medium text-gray-700 transition-colors group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-white">
+              {label}
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <div class="filter-group animate-fade-up" style="--animation-delay: 300ms;">
+      <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Cost</h3>
+      <div class="space-y-3">
+        {filters.cost.map(({ value, label, icon }) => (
+          <label class="group flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <input 
+              type="checkbox" 
+              name="cost" 
+              value={value} 
+              checked={activeFilters.includes(value)}
+              class="h-5 w-5 rounded border-gray-300 text-primary-600 transition-colors focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-primary-400"
+            />
+            <span class="text-xl transition-transform duration-200 group-hover:scale-110">{icon}</span>
+            <span class="text-sm font-medium text-gray-700 transition-colors group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-white">
+              {label}
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script>
+  function initializeFilters() {
+    const filterPanel = document.querySelector('aside');
+    if (!filterPanel) return;
+
+    const checkboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
+    const clearAllButton = filterPanel.querySelector('[data-action="clear-all"]');
+    const activeFilters = filterPanel.querySelectorAll('[data-filter]');
+
+    // Update URL with selected filters
+    function updateFilters() {
+      const selectedFilters = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete('filters');
+      if (selectedFilters.length > 0) {
+        url.searchParams.set('filters', selectedFilters.join(','));
+      }
+      window.history.replaceState({}, '', url);
+
+      // Trigger custom event for resource list update
+      const event = new CustomEvent('filtersChanged', {
+        detail: { filters: selectedFilters }
+      });
+      window.dispatchEvent(event);
+    }
+
+    // Clear all filters
+    function clearAllFilters() {
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      updateFilters();
+    }
+
+    // Event listeners
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateFilters);
+    });
+
+    if (clearAllButton) {
+      clearAllButton.addEventListener('click', clearAllFilters);
+    }
+
+    activeFilters.forEach(filter => {
+      filter.addEventListener('click', () => {
+        const filterValue = filter.dataset.filter;
+        const checkbox = Array.from(checkboxes).find(cb => cb.value === filterValue);
+        if (checkbox) {
+          checkbox.checked = false;
+          updateFilters();
+        }
+      });
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener('astro:page-load', initializeFilters);
+</script>

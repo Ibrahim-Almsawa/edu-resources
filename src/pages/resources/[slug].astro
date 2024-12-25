@@ -1,0 +1,249 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ResourceList from '../../components/ResourceList.astro';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('resources');
+  return resources.map(resource => ({
+    params: { slug: resource.slug },
+    props: { resource },
+  }));
+}
+
+const { resource } = Astro.props;
+const { Content } = await resource.render();
+
+// Get related resources
+const allResources = await getCollection('resources');
+const relatedResources = allResources
+  .filter(r => 
+    r.slug !== resource.slug && 
+    r.data.topics.some(topic => resource.data.topics.includes(topic))
+  )
+  .slice(0, 3);
+
+// Format date
+const lastVerified = new Date(resource.data.lastVerified).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<BaseLayout title={resource.data.title}>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/resources">Resources</a></li>
+      <li aria-current="page">{resource.data.title}</li>
+    </ol>
+  </nav>
+
+  <article class="resource-detail">
+    <header>
+      <div class="resource-meta">
+        <span class={`badge ${resource.data.type}`}>{resource.data.type}</span>
+        <span class={`badge ${resource.data.difficulty}`}>{resource.data.difficulty}</span>
+        <span class={`badge ${resource.data.cost}`}>{resource.data.cost}</span>
+      </div>
+      
+      <h1>{resource.data.title}</h1>
+      
+      <div class="topics">
+        {resource.data.topics.map(topic => (
+          <a href={`/topics/${topic}`} class="topic-tag">{topic}</a>
+        ))}
+      </div>
+    </header>
+
+    <div class="resource-content">
+      <div class="content">
+        <Content />
+      </div>
+
+      <aside class="resource-info">
+        <a href={resource.data.url} class="cta-button" target="_blank" rel="noopener noreferrer">
+          Visit Resource
+        </a>
+        
+        <div class="info-box">
+          <h3>Resource Information</h3>
+          <dl>
+            <dt>Last Verified</dt>
+            <dd>{lastVerified}</dd>
+            <dt>Type</dt>
+            <dd>{resource.data.type}</dd>
+            <dt>Difficulty</dt>
+            <dd>{resource.data.difficulty}</dd>
+            <dt>Cost</dt>
+            <dd>{resource.data.cost}</dd>
+          </dl>
+        </div>
+      </aside>
+    </div>
+
+    {relatedResources.length > 0 && (
+      <section class="related-resources">
+        <h2>Related Resources</h2>
+        <ResourceList resources={relatedResources} />
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .breadcrumb {
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .breadcrumb li:not(:last-child)::after {
+    content: "/";
+    margin-left: 0.5rem;
+    color: #9ca3af;
+  }
+
+  .breadcrumb a {
+    color: #4b5563;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--primary-color);
+  }
+
+  .resource-detail {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  .resource-meta {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .topic-tag {
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-decoration: none;
+  }
+
+  .topic-tag:hover {
+    background: #e5e7eb;
+  }
+
+  .resource-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .content {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+
+  .resource-info {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+  }
+
+  .cta-button {
+    display: block;
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.2s;
+  }
+
+  .cta-button:hover {
+    background: #1d4ed8;
+  }
+
+  .info-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .info-box h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1rem;
+  }
+
+  dt {
+    color: #4b5563;
+    font-weight: 500;
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .related-resources {
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .related-resources h2 {
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .resource-content {
+      grid-template-columns: 1fr;
+    }
+
+    .resource-info {
+      position: static;
+    }
+  }
+</style>

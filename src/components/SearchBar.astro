@@ -1,0 +1,136 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  placeholder?: string;
+}
+
+const { placeholder = "Search resources..." } = Astro.props;
+
+// Pre-fetch all resources for client-side search
+const resources = await getCollection('resources');
+const searchData = resources.map(resource => ({
+  slug: resource.slug,
+  title: resource.data.title,
+  description: resource.data.description,
+  topics: resource.data.topics,
+  type: resource.data.type,
+}));
+---
+
+<div class="mx-auto w-full max-w-2xl">
+  <form class="relative flex items-center" role="search">
+    <input
+      type="search"
+      id="search-input"
+      placeholder={placeholder}
+      class="w-full rounded-full border border-gray-200 bg-white py-3 pl-12 pr-4 text-base text-gray-900 shadow-sm placeholder:text-gray-500 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-400 dark:focus:ring-primary-400/20"
+    />
+    <div class="pointer-events-none absolute left-4">
+      <svg 
+        class="h-5 w-5 text-gray-400 dark:text-gray-500" 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 20 20" 
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path 
+          fill-rule="evenodd" 
+          d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" 
+          clip-rule="evenodd" 
+        />
+      </svg>
+    </div>
+  </form>
+
+  <div 
+    id="search-results" 
+    class="absolute mt-2 hidden w-full rounded-lg border border-gray-200 bg-white py-2 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+  >
+    <div class="px-4 py-2">
+      <div class="flex items-center gap-2">
+        <div class="h-4 w-4 animate-spin rounded-full border-2 border-primary-500 border-t-transparent dark:border-primary-400"></div>
+        <span class="text-sm text-gray-600 dark:text-gray-300">Searching...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let debounceTimeout: number;
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const searchResults = document.getElementById('search-results');
+
+  if (searchInput && searchResults) {
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim();
+      
+      // Show loading state
+      if (query) {
+        searchResults.classList.remove('hidden');
+      } else {
+        searchResults.classList.add('hidden');
+      }
+
+      // Debounce search
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(() => {
+        if (query) {
+          performSearch(query);
+        }
+      }, 300);
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!searchInput.contains(event.target as Node) && !searchResults.contains(event.target as Node)) {
+        searchResults.classList.add('hidden');
+      }
+    });
+  }
+
+  async function performSearch(query: string) {
+    try {
+      // Filter resources based on query
+      const results = searchData.filter(resource => 
+        resource.title.toLowerCase().includes(query.toLowerCase()) ||
+        resource.description?.toLowerCase().includes(query.toLowerCase()) ||
+        resource.topics.some(topic => topic.toLowerCase().includes(query.toLowerCase()))
+      );
+      
+      // Update results UI
+      if (searchResults) {
+        searchResults.innerHTML = results.length ? `
+          <ul class="max-h-96 overflow-auto">
+            ${results.map(result => `
+              <li>
+                <a 
+                  href="/resources/${result.slug}" 
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  ${result.title}
+                  ${result.description ? `
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">${result.description.slice(0, 100)}...</p>
+                  ` : ''}
+                </a>
+              </li>
+            `).join('')}
+          </ul>
+        ` : `
+          <div class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+            No results found
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      if (searchResults) {
+        searchResults.innerHTML = `
+          <div class="px-4 py-2 text-sm text-red-600 dark:text-red-400">
+            An error occurred while searching
+          </div>
+        `;
+      }
+    }
+  }
+</script>

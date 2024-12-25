@@ -1,0 +1,189 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ResourceList from '../../components/ResourceList.astro';
+import FilterPanel from '../../components/FilterPanel.astro';
+
+// Get all resources
+const allResources = await getCollection('resources');
+
+// Get featured and recent resources
+const featuredResources = allResources.filter(resource => resource.data.featured);
+const recentResources = [...allResources]
+  .sort((a, b) => new Date(b.data.lastVerified).getTime() - new Date(a.data.lastVerified).getTime())
+  .slice(0, 6);
+
+// Get unique topics
+const topics = [...new Set(allResources.flatMap(resource => resource.data.topics))].sort();
+---
+
+<BaseLayout 
+  title="Learning Resources"
+  description="Browse our curated collection of programming and design learning resources"
+>
+  <div class="resources-page">
+    <header>
+      <h1>Learning Resources</h1>
+      <p class="subtitle">Browse our curated collection of {allResources.length} learning resources</p>
+    </header>
+
+    <div class="resources-layout">
+      <aside class="filters-sidebar">
+        <FilterPanel />
+      </aside>
+
+      <main class="resources-content">
+        {featuredResources.length > 0 && (
+          <section class="featured-resources">
+            <h2>Featured Resources</h2>
+            <ResourceList resources={featuredResources} />
+          </section>
+        )}
+
+        <section class="recent-resources">
+          <h2>Recently Updated</h2>
+          <ResourceList resources={recentResources} />
+        </section>
+
+        <section class="topics-overview">
+          <h2>Browse by Topic</h2>
+          <div class="topics-grid">
+            {topics.map(topic => (
+              <a href={`/topics/${topic}`} class="topic-link">
+                {topic}
+                <span class="count">
+                  {allResources.filter(r => r.data.topics.includes(topic)).length}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .resources-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #4b5563;
+  }
+
+  .resources-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+  }
+
+  .filters-sidebar {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .topic-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: white;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+  }
+
+  .topic-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  }
+
+  .count {
+    background: #f3f4f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
+  @media (max-width: 768px) {
+    .resources-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .filters-sidebar {
+      position: static;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+    }
+  }
+</style>
+
+<script>
+  // Handle filter changes
+  window.addEventListener('filter-change', (e: Event) => {
+    const filters = (e as CustomEvent).detail;
+    const resourceElements = document.querySelectorAll('.resource-card');
+    
+    resourceElements.forEach(el => {
+      const resourceEl = el as HTMLElement;
+      const type = resourceEl.dataset.type;
+      const difficulty = resourceEl.dataset.difficulty;
+      const cost = resourceEl.dataset.cost;
+      
+      const matchesType = !filters.type.length || filters.type.includes(type);
+      const matchesDifficulty = !filters.difficulty.length || filters.difficulty.includes(difficulty);
+      const matchesCost = !filters.cost.length || filters.cost.includes(cost);
+      
+      if (matchesType && matchesDifficulty && matchesCost) {
+        resourceEl.style.display = '';
+      } else {
+        resourceEl.style.display = 'none';
+      }
+    });
+  });
+</script>

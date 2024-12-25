@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="About Educational Resources Directory"
+  description="Learn about our mission to provide curated learning resources for programming and design"
+>
+  <article class="about-page">
+    <header class="about-header">
+      <h1>About Us</h1>
+      <p class="lead">
+        Curating the best learning resources for the next generation of developers and designers.
+      </p>
+    </header>
+
+    <section class="mission">
+      <h2>Our Mission</h2>
+      <p>
+        The Educational Resources Directory aims to simplify the learning journey for aspiring developers and designers. 
+        We carefully curate and organize high-quality learning resources, making it easier to find the right materials 
+        for your learning path.
+      </p>
+    </section>
+
+    <section class="features">
+      <h2>What We Offer</h2>
+      <div class="features-grid">
+        <div class="feature">
+          <span class="icon">🎯</span>
+          <h3>Curated Content</h3>
+          <p>Hand-picked resources verified for quality and relevance</p>
+        </div>
+        <div class="feature">
+          <span class="icon">🔍</span>
+          <h3>Easy Discovery</h3>
+          <p>Powerful search and filtering to find exactly what you need</p>
+        </div>
+        <div class="feature">
+          <span class="icon">📚</span>
+          <h3>Topic Organization</h3>
+          <p>Resources organized by topics and difficulty levels</p>
+        </div>
+        <div class="feature">
+          <span class="icon">💡</span>
+          <h3>Learning Paths</h3>
+          <p>Structured paths to guide your learning journey</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contribute">
+      <h2>Contribute</h2>
+      <p>
+        We believe in the power of community. If you know of great learning resources that should be included 
+        in our directory, we'd love to hear from you. Check out our contribution guidelines to learn how you 
+        can help improve this resource for everyone.
+      </p>
+      <div class="cta-buttons">
+        <a href="/contribute" class="button primary">Contribute Resources</a>
+        <a href="https://github.com/your-repo" class="button secondary">GitHub Repository</a>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .about-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lead {
+    font-size: 1.25rem;
+    color: #4b5563;
+  }
+
+  section {
+    margin-bottom: 4rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .feature {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+  }
+
+  p {
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .primary {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .primary:hover {
+    background: #1d4ed8;
+  }
+
+  .secondary {
+    background: #f3f4f6;
+    color: #1f2937;
+  }
+
+  .secondary:hover {
+    background: #e5e7eb;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .lead {
+      font-size: 1.125rem;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+    }
+
+    .button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

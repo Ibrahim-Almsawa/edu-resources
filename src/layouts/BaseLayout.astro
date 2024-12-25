@@ -1,0 +1,278 @@
+---
+import SEO from '../components/SEO.astro';
+import Analytics from '../components/Analytics.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const { 
+  title, 
+  description = "A curated collection of educational resources for developers and designers",
+  image,
+  type
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SEO {title} {description} {image} {type} />
+    <Analytics />
+    <script is:inline>
+      // Initialize theme
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+    
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+  </head>
+  <body>
+    <header class="fixed top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+      <div class="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="/" class="text-xl font-bold text-gray-900 dark:text-white">
+          <span class="text-primary-600 dark:text-primary-400">📚</span> EduResources
+        </a>
+        <div class="flex items-center gap-6">
+          <nav class="hidden md:block">
+            <ul class="flex items-center gap-6">
+              <li>
+                <a href="/topics" class="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                  Topics
+                </a>
+              </li>
+              <li>
+                <a href="/resources" class="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                  Resources
+                </a>
+              </li>
+              <li>
+                <a href="/about" class="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                  About
+                </a>
+              </li>
+              <li>
+                <a href="/contribute" class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600">
+                  Contribute
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <ThemeToggle />
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto mt-20 max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h3>EduResources</h3>
+            <p>Curating the best learning resources for developers and designers.</p>
+          </div>
+          <div class="footer-section">
+            <h4>Navigation</h4>
+            <ul>
+              <li><a href="/topics">Topics</a></li>
+              <li><a href="/resources">Resources</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contribute">Contribute</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Topics</h4>
+            <ul>
+              <li><a href="/topics/frontend-development">Frontend</a></li>
+              <li><a href="/topics/backend-development">Backend</a></li>
+              <li><a href="/topics/ui-ux-design">UI/UX Design</a></li>
+              <li><a href="/topics/devops">DevOps</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Connect</h4>
+            <ul>
+              <li><a href="https://github.com/your-repo">GitHub</a></li>
+              <li><a href="https://twitter.com/your-handle">Twitter</a></li>
+              <li><a href="/discord">Discord Community</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} EduResources. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  /* Header Styles */
+  .site-header {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--header-height);
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    text-decoration: none;
+  }
+
+  .logo:hover {
+    color: var(--primary-600);
+  }
+
+  .logo-icon {
+    font-size: 1.5rem;
+  }
+
+  .main-nav {
+    height: 100%;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-list a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 0.5rem;
+    color: var(--gray-600);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .nav-list a:not(.button):hover {
+    color: var(--gray-900);
+  }
+
+  /* Footer Styles */
+  .site-footer {
+    background: white;
+    padding: 4rem 0 2rem;
+    margin-top: var(--section-spacing);
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  .footer-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+  }
+
+  .footer-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+  }
+
+  .footer-section p {
+    color: var(--gray-600);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-section ul li {
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-section ul a {
+    color: var(--gray-600);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  .footer-section ul a:hover {
+    color: var(--gray-900);
+  }
+
+  .footer-bottom {
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-100);
+    text-align: center;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 768px) {
+    .nav-list {
+      gap: 1rem;
+    }
+
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .nav-list {
+      display: none;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>
